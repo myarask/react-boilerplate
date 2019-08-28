@@ -4,7 +4,7 @@ const ContentSwitch = ({ index, children, ...rest }) => {
   const arr = React.Children.toArray(children);
 
   if (index >= 0 && index <= arr.length) {
-    return React.cloneElement(arr[index], { ...rest });
+    return React.cloneElement(arr[index], rest);
   }
 
   return null;

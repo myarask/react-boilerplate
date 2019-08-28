@@ -1,24 +1,52 @@
-import React, { lazy } from 'react';
-// import axios from 'axios';
+import React from 'react';
+import axios from 'axios';
+import { SEARCH } from 'constants/apis';
 import DeviceSwitch from 'components/DeviceSwitch';
-
-const Desktop = lazy(() => import('./HomeDesktop'));
-const Mobile = lazy(() => import('./HomeMobile'));
-const Tablet = lazy(() => import('./HomeTablet'));
+import HomeDesktop from './HomeDesktop';
+import HomeMobile from './HomeMobile';
+import HomeTablet from './HomeTablet';
 
 class Home extends React.Component {
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = {
+      search: '',
+      results: [],
+    };
 
-  funcs = {
-    setPageState: this.setState.bind(this),
-  };
+    this.funcs = {
+      setPageState: this.setState.bind(this),
+      onChange: this.onChange.bind(this),
+    };
+  }
+
+  componentDidMount() {
+    this.fetchResults();
+  }
+
+  onChange(e) {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  }
+
+  fetchResults() {
+    const body = {
+      Text: '',
+      From: 0,
+    };
+    axios
+      .post(SEARCH, body)
+      .then(resp =>
+        this.setState(prevState => ({ results: [...prevState.results, resp.data.results] }))
+      );
+  }
 
   render() {
     return (
       <DeviceSwitch {...this.props} {...this.state} {...this.funcs}>
-        <Mobile />
-        <Tablet />
-        <Desktop />
+        <HomeMobile />
+        <HomeTablet />
+        <HomeDesktop />
       </DeviceSwitch>
     );
   }
